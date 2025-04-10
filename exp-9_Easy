@@ -1,0 +1,41 @@
+import org.springframework.context.annotation.*;
+
+class Course {
+    String name = "Java";
+    int duration = 6;
+    public String toString() {
+        return name + " - " + duration + " weeks";
+    }
+}
+
+class Student {
+    String name = "Alice";
+    Course course;
+    Student(Course course) {
+        this.course = course;
+    }
+    public String toString() {
+        return name + " enrolled in " + course;
+    }
+}
+
+@Configuration
+class AppConfig {
+    @Bean
+    Course course() {
+        return new Course();
+    }
+
+    @Bean
+    Student student() {
+        return new Student(course());
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        var context = new AnnotationConfigApplicationContext(AppConfig.class);
+        System.out.println(context.getBean(Student.class));
+        context.close();
+    }
+}
