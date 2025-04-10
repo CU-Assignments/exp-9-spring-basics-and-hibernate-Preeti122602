@@ -1,0 +1,25 @@
+import org.hibernate.*;
+import org.springframework.transaction.annotation.Transactional;
+
+public class TransactionService {
+    private SessionFactory factory;
+
+    public TransactionService(SessionFactory factory) {
+        this.factory = factory;
+    }
+
+    @Transactional
+    public void transfer(int fromId, int toId, double amount) {
+        Session session = factory.openSession();
+        Transaction tx = session.beginTransaction();
+        Account from = session.get(Account.class, fromId);
+        Account to = session.get(Account.class, toId);
+        if (from.getBalance() < amount) throw new RuntimeException("Insufficient funds");
+        from.setBalance(from.getBalance() - amount);
+        to.setBalance(to.getBalance() + amount);
+        session.update(from);
+        session.update(to);
+        tx.commit();
+        session.close();
+    }
+}
