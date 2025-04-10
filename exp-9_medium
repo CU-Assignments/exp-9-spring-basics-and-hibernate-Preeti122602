@@ -1,0 +1,32 @@
+import javax.persistence.*;
+import org.hibernate.*;
+import org.hibernate.cfg.Configuration;
+
+@Entity
+class Student {
+    @Id
+    @GeneratedValue
+    int id;
+    String name;
+    int age;
+
+    Student() {}
+    Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        var sf = new Configuration().configure().buildSessionFactory();
+        var session = sf.openSession();
+        session.beginTransaction();
+
+        session.save(new Student("Bob", 22));
+
+        session.getTransaction().commit();
+        session.close();
+        sf.close();
+    }
+}
